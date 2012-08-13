@@ -1,0 +1,48 @@
+===============
+erchef - README
+===============
+
+This is the Erlang implementation of Chef's REST API.
+
+Building erchef (tl;dr version)
+---------------------------------
+1) Install Erlang R15B01 or later
+
+2) Run 'make rel'
+
+3) 'cd rel/erchef;bin/erchef start'
+
+4) Profit!
+
+
+Release tagging and branching
+-----------------------------
+
+We manage releases of erchef from this top-level project.  To tag a
+new release:
+
+1. Merge changes into the release branch. You will want to increment
+   the version in rel/reltool.config and can decide whether it makes
+   sense to do this on master and merge it in, or edit on the release
+   branch post-merge.
+
+2. Temporarily remove the the USE_REBAR_LOCKED file. Do a clean build
+   and test. If the test is good, update the rebar.config.lock file by
+   running `make update_locked_config`. Commit the new lock file and
+   tag the release. Sequence might look like this:
+
+       rm USE_REBAR_LOCKED
+       make distclean
+       make rel
+       # do testing here
+       make update_locked_config
+       touch USE_REBAR_LOCKED
+       git add rebar.config.lock
+       git commit
+       git tag -a x.y.z
+       git push opscode release
+       git push --tags opscode
+
+    We now create annotated tags because this gives more useful behaviro for git describe.
+
+3. Edit data bag to set erchef-revision to "x.y.z".
