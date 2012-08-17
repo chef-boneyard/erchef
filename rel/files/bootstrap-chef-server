@@ -1,0 +1,51 @@
+#!/usr/bin/env escript
+%% -*- erlang-indent-level: 4;indent-tabs-mode: nil; fill-column: 92-*-
+%% ex: ts=4 sw=4 et
+%% @author Seth Falcon <seth@opscode.com>
+%% Copyright 2012 Opscode, Inc. All Rights Reserved.
+
+%% TODO: The cookie used by erchef should be part of config
+%% TODO: Make database type configurable
+
+-define(SELF, 'me@127.0.0.1').
+-define(ERCHEF, 'erchef@127.0.0.1').
+-define(ERCHEF_COOKIE, 'erchef').
+
+main(_) ->
+    init_network(),
+    create_admin_client(),
+    create_default_environment().
+
+init_network() ->
+    net_kernel:start([?SELF, longnames]),
+    erlang:set_cookie(node(), ?ERCHEF_COOKIE),
+    pong = net_adm:ping(?ERCHEF).
+
+create_admin_client() ->
+    case rpc:call(?ERCHEF, chef_sked, create_client,
+                  [<<"admin">>, false, true]) of
+        {ok, PrivateKey} ->
+            %% FIXME: where should we write this and how should we configure it?
+            file:write_file("/tmp/admin.pem", PrivateKey),
+            io:format("client 'admin' created. Key written to /tmp/admin.pem~n"),
+            {ok, created};
+        {conflict, _} ->
+            io:format("client 'admin' already exists~n"),
+            {ok, exists};
+        Error ->
+            io:format("error creating client 'admin': ~p~n", [Error]),
+            halt(2)
+    end.
+
+create_default_environment() ->
+    case rpc:call(?ERCHEF, chef_sked, create_default_environment, [pgsql]) of
+        ok ->
+            io:format("environment '_default' created~n"),
+            ok;
+        {conflict, _} ->
+            io:format("environment '_default' already exists~n"),
+            ok;
+        Error ->
+            io:format("Error creating environment '_default': ~p~n", [Error]),
+            halt(3)
+    end.
