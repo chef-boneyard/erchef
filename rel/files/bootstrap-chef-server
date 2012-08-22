@@ -27,7 +27,8 @@ main(_) ->
     create_default_environment().
 
 init_code_path() ->
-    [code:add_path(CodePath) || CodePath <- filelib:wildcard("../lib/*/ebin")].
+    AllTheEbins = filename:join(filename:dirname(escript:script_name()), "../lib/*/ebin"),
+    [code:add_path(CodePath) || CodePath <- filelib:wildcard(AllTheEbins)].
 
 init_network() ->
     net_kernel:start([?SELF, longnames]),
