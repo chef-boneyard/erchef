@@ -20,8 +20,8 @@ main(_) ->
     init_network(),
     %% if we generated keys, let's use them
     Keys = load_keys(?DEFAULT_KEY_PATH),
-    create_client(<<"admin">>, admin, get_public_key(admin_pub, Keys)),
-    create_client(<<"validator">>, validator, get_public_key(validator_pub, Keys)),
+    create_client(<<"admin">>, admin, get_public_key(admin, Keys)),
+    create_client(<<"validator">>, validator, get_public_key(validator, Keys)),
     create_default_environment().
 
 init_code_path() ->
@@ -55,19 +55,18 @@ create_client(Name, Type, PublicKey) ->
 
 get_public_key(Name, Keys) ->
     case dict:find(Name, Keys) of
-        {ok, #'RSAPublicKey'{modulus=Mod, publicExponent=PublicExponent}} ->
+        {ok, #'RSAPrivateKey'{modulus=Mod, publicExponent=Exp}} ->
             EncodedEntry = public_key:pem_entry_encode('SubjectPublicKeyInfo',
                                                        #'RSAPublicKey'{
                                                             modulus=Mod,
-                                                            publicExponent=PublicExponent
+                                                            publicExponent=Exp
                                                        }),
             public_key:pem_encode([EncodedEntry]);
-        {ok, {Format, _, _}} -> %% TODO - attempt to extract public key from private key?
-            io:format("could not locate 'RSAPublicKey' entry in pem ~p - "
+        {ok, {Format, _, _}} ->
+            io:format("could not locate 'RSAPrivateKey' entry in pem ~p - "
                       "did find ~p entry.~n", [Name, Format]),
             halt(3);
         error ->
-            io:format("could not locate pem ~p in ~p~n", [Name, ?DEFAULT_KEY_PATH]),
             create_key
     end.
 
@@ -81,7 +80,7 @@ create_default_environment() ->
             ok;
         Error ->
             io:format("Error creating environment '_default': ~p~n", [Error]),
-            halt(4)
+            halt(2)
     end.
 
 is_validator(Type) ->
