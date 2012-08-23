@@ -22,8 +22,8 @@ main(_) ->
     error_logger:tty(false), %% temporarly disable log output why we load keys
     Keys = load_keyring_from_dir("/etc/chef-server", dict:new()),
     error_logger:tty(true), %% re-enable log output
-    create_client("admin", admin, get_public_key("admin_pub", Keys)),
-    create_client("validator", validator, get_public_key("validator_pub", Keys)),
+    create_client(<<"admin">>, admin, get_public_key(admin_pub, Keys)),
+    create_client(<<"validator">>, validator, get_public_key(validator_pub, Keys)),
     create_default_environment().
 
 init_code_path() ->
@@ -36,16 +36,16 @@ init_network() ->
     pong = net_adm:ping(?ERCHEF).
 
 create_client(Name, Type, PublicKey) ->
-    Args = [list_to_binary(Name), is_validator(Type), is_admin(Type), PublicKey],
+    Args = [Name, is_validator(Type), is_admin(Type), PublicKey],
     case rpc:call(?ERCHEF, chef_sked, create_client,
                   Args) of
         ok ->
             io:format("client ~p created.~n", [Name]),
             {ok, created};
         {ok, PrivateKey} ->
-            PrivateKeyPath = filename:join([?DEFAULT_KEY_PATH, Name++".pem"]),
-            file:write_file(PrivateKeyPath, PrivateKey),
-            io:format("client ~p created. Key written to ~p~n", [Name, PrivateKeyPath]),
+            PKPath = filename:join([?DEFAULT_KEY_PATH, iolist_to_binary([Name, ".pem"])]),
+            file:write_file(PKPath, PrivateKey),
+            io:format("client ~p created. Key written to ~p~n", [Name, PKPath]),
             {ok, created};
         {conflict, _} ->
             io:format("client ~p already exists~n", [Name]),
@@ -56,7 +56,7 @@ create_client(Name, Type, PublicKey) ->
     end.
 
 get_public_key(Name, Keys) ->
-    case dict:find(list_to_atom(Name), Keys) of
+    case dict:find(Name, Keys) of
         {ok, {'RSAPublicKey', Modulus, PublicExponent}} ->
             EncodedEntry = public_key:pem_entry_encode('SubjectPublicKeyInfo',
                                                        #'RSAPublicKey'{
