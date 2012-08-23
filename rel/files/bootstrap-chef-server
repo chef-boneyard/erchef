@@ -2,39 +2,72 @@
 %% -*- erlang-indent-level: 4;indent-tabs-mode: nil; fill-column: 92-*-
 %% ex: ts=4 sw=4 et
 %% @author Seth Falcon <seth@opscode.com>
+%% @author Seth Chisamore <schisamo@opscode.com>
 %% Copyright 2012 Opscode, Inc. All Rights Reserved.
 
 %% TODO: The cookie used by erchef should be part of config
 %% TODO: Make database type configurable
 
+-include_lib("public_key/include/public_key.hrl").
+
 -define(SELF, 'me@127.0.0.1').
 -define(ERCHEF, 'erchef@127.0.0.1').
 -define(ERCHEF_COOKIE, 'erchef').
+-define(DEFAULT_KEY_PATH, '/etc/chef-server').
 
 main(_) ->
+    init_code_path(),
     init_network(),
-    create_admin_client(),
+    %% if we generated keys, let's use them
+    Keys = load_keys(?DEFAULT_KEY_PATH),
+    create_client(<<"admin">>, admin, get_public_key(admin, Keys)),
+    create_client(<<"validator">>, validator, get_public_key(validator, Keys)),
     create_default_environment().
+
+init_code_path() ->
+    AllTheEbins = filename:join(filename:dirname(escript:script_name()), "../lib/*/ebin"),
+    [code:add_path(CodePath) || CodePath <- filelib:wildcard(AllTheEbins)].
 
 init_network() ->
     net_kernel:start([?SELF, longnames]),
     erlang:set_cookie(node(), ?ERCHEF_COOKIE),
     pong = net_adm:ping(?ERCHEF).
 
-create_admin_client() ->
+create_client(Name, Type, PublicKey) ->
+    Args = [Name, is_validator(Type), is_admin(Type), PublicKey],
     case rpc:call(?ERCHEF, chef_sked, create_client,
-                  [<<"admin">>, false, true]) of
+                  Args) of
+        ok ->
+            io:format("client ~p created.~n", [Name]),
+            {ok, created};
         {ok, PrivateKey} ->
-            %% FIXME: where should we write this and how should we configure it?
-            file:write_file("/tmp/admin.pem", PrivateKey),
-            io:format("client 'admin' created. Key written to /tmp/admin.pem~n"),
+            PKPath = filename:join([?DEFAULT_KEY_PATH, iolist_to_binary([Name, ".pem"])]),
+            file:write_file(PKPath, PrivateKey),
+            io:format("client ~p created. Key written to ~p~n", [Name, PKPath]),
             {ok, created};
         {conflict, _} ->
-            io:format("client 'admin' already exists~n"),
+            io:format("client ~p already exists~n", [Name]),
             {ok, exists};
         Error ->
-            io:format("error creating client 'admin': ~p~n", [Error]),
+            io:format("error creating client ~p: ~p~n", [Name, Error]),
             halt(2)
+    end.
+
+get_public_key(Name, Keys) ->
+    case dict:find(Name, Keys) of
+        {ok, #'RSAPrivateKey'{modulus=Mod, publicExponent=Exp}} ->
+            EncodedEntry = public_key:pem_entry_encode('SubjectPublicKeyInfo',
+                                                       #'RSAPublicKey'{
+                                                            modulus=Mod,
+                                                            publicExponent=Exp
+                                                       }),
+            public_key:pem_encode([EncodedEntry]);
+        {ok, {Format, _, _}} ->
+            io:format("could not locate 'RSAPrivateKey' entry in pem ~p - "
+                      "did find ~p entry.~n", [Name, Format]),
+            halt(3);
+        error ->
+            create_key
     end.
 
 create_default_environment() ->
@@ -47,5 +80,69 @@ create_default_environment() ->
             ok;
         Error ->
             io:format("Error creating environment '_default': ~p~n", [Error]),
-            halt(3)
+            halt(2)
+    end.
+
+is_validator(Type) ->
+    Type =:= validator.
+
+is_admin(Type) ->
+    Type =:= admin.
+
+load_keys(Path) ->
+    %% temporarly disable log output while we load keys
+    error_logger:tty(false),
+    Keys = load_keyring_from_dir(Path, dict:new()),
+    %% re-enable log output
+    error_logger:tty(true),
+    Keys.
+
+%%-----------------------------------------------------------------------------
+%% FIXME - export these cargo-culted functions in chef_keyring
+%%-----------------------------------------------------------------------------
+
+%%%
+%%% Load all of the .pem files in the specified directory into the keys dictionary
+%%%
+load_keyring_from_dir(undef, Keys) -> Keys;
+load_keyring_from_dir(Dir, Keys) ->
+    case filelib:wildcard(filename:join([Dir,"*.pem"])) of
+        [] ->
+            error_logger:info_msg("Error reading keyring directory ~s: ~p~n", [Dir, "No *.pem files found"]),
+            Keys;
+        FileNames ->
+            KeyPaths = [{list_to_atom(filename:rootname(filename:basename(F))), F} || F <- FileNames ],
+            {ok, NewKeys} = load_keyring_files(KeyPaths, Keys),
+            NewKeys
+    end.
+
+%%%
+%%% Load a list of {keyname, filename} pairs into the keys dictionary
+%%%
+load_keyring_files([], Keys) ->
+    {ok, Keys};
+load_keyring_files([{Name, Path}|T], Keys) ->
+    case key_from_file(Name, Path) of
+        {ok, Key} -> load_keyring_files(T, dict:store(Name, Key, Keys));
+        _ -> load_keyring_files(T, Keys)
+    end.
+
+%%%
+%%% Load key from file
+%%%
+key_from_file(Name, File) ->
+    case file:read_file(File) of
+        {ok, RawKey} ->
+            case chef_authn:extract_public_or_private_key(RawKey) of
+                {error, bad_key} ->
+                    error_logger:error_msg("Failed to decode PEM file ~s for ~p~n", [File, Name]),
+                    {error, bad_key};
+                PrivateKey when is_tuple(PrivateKey) ->
+                    KeyType = element(1, PrivateKey),
+                    error_logger:info_msg("Loaded key ~s of type ~s from file ~s ~n", [Name, KeyType, File]),
+                    {ok, PrivateKey}
+            end;
+        Error ->
+            error_logger:error_msg("Error reading file ~s for ~p: ~p~n", [File, Name, Error]),
+            Error
     end.
