@@ -19,7 +19,7 @@ main(_) ->
     init_code_path(),
     init_network(),
     %% if we generated keys, let's use them
-    error_logger:tty(false), %% temporarly disable log output why we load keys
+    error_logger:tty(false), %% temporarly disable log output while we load keys
     Keys = load_keyring_from_dir("/etc/chef-server", dict:new()),
     error_logger:tty(true), %% re-enable log output
     create_client(<<"admin">>, admin, get_public_key(admin_pub, Keys)),
@@ -64,9 +64,12 @@ get_public_key(Name, Keys) ->
                                                             publicExponent=PublicExponent
                                                        }),
             public_key:pem_encode([EncodedEntry]);
-        {ok, _} ->
+        {ok, {Format, _, _}} -> %% TODO - attempt to extract public key from private key?
+            io:format("could not locate 'RSAPublicKey' entry in pem ~p - "
+                      "did find ~p entry.~n", [Name, Format]),
             create_key;
         error ->
+            io:format("could not locate pem ~p in ~p~n", [Name, ?DEFAULT_KEY_PATH]),
             create_key
     end.
 
