@@ -21,7 +21,7 @@ main(_) ->
     %% if we generated keys, let's use them
     Keys = load_keys(?DEFAULT_KEY_PATH),
     create_client(<<"admin">>, admin, get_public_key(admin, Keys)),
-    create_client(<<"validator">>, validator, get_public_key(validator, Keys)),
+    create_client(<<"chef-validator">>, validator, get_public_key('chef-validator', Keys)),
     create_default_environment().
 
 init_code_path() ->
