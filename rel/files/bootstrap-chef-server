@@ -36,14 +36,7 @@ init_network() ->
     pong = net_adm:ping(?ERCHEF).
 
 create_client(Name, Type, PublicKey) ->
-    Args = case Type of
-                admin ->
-                    [list_to_binary(Name), false, true, PublicKey];
-                validator ->
-                    [list_to_binary(Name), true, false, PublicKey];
-                _ ->
-                    [list_to_binary(Name), false, false, PublicKey]
-           end,
+    Args = [list_to_binary(Name), is_validator(Type), is_admin(Type), PublicKey],
     case rpc:call(?ERCHEF, chef_sked, create_client,
                   Args) of
         ok ->
@@ -89,6 +82,12 @@ create_default_environment() ->
             io:format("Error creating environment '_default': ~p~n", [Error]),
             halt(3)
     end.
+
+is_validator(Type) ->
+    Type =:= validator.
+
+is_admin(Type) ->
+    Type =:= admin.
 
 %%-----------------------------------------------------------------------------
 %% TODO - export these cargo-culted functions in chef_keyring
