@@ -57,10 +57,10 @@ create_client(Name, Type, PublicKey) ->
 
 get_public_key(Name, Keys) ->
     case dict:find(Name, Keys) of
-        {ok, {'RSAPublicKey', Modulus, PublicExponent}} ->
+        {ok, #'RSAPublicKey'{modulus=Mod, publicExponent=PublicExponent}} ->
             EncodedEntry = public_key:pem_entry_encode('SubjectPublicKeyInfo',
                                                        #'RSAPublicKey'{
-                                                            modulus=Modulus,
+                                                            modulus=Mod,
                                                             publicExponent=PublicExponent
                                                        }),
             public_key:pem_encode([EncodedEntry]);
