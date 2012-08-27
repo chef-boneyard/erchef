@@ -86,7 +86,7 @@ get_public_key(Name, Keys) ->
     end.
 
 create_default_environment() ->
-    case rpc:call(?ERCHEF, chef_sked, create_default_environment, [pgsql]) of
+    case rpc:call(?ERCHEF, chef_sked, create_default_environment, []) of
         ok ->
             io:format("environment '_default' created~n"),
             ok;
