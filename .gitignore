@@ -1,0 +1,6 @@
+Gemfile.local
+.*sw?
+Gemfile.orig
+Gemfile.lock.orig
+.bundle/
+bin/
