@@ -56,14 +56,18 @@ requestors({
                # The the admin user, for the purposes of getting things rolling
                :admin => {
                  :name => "pedant_admin_client",
-                 :create_me => true
+                 :create_me => true,
+                 :create_knife => true,
+                 :admin => true
                },
                :non_admin => {
                  :name => 'pedant_client',
-                 :create_me => true
+                 :create_me => true,
+                 :create_knife => true
                },
                :bad => {
-                 :name => 'bad_client'
+                 :name => 'bad_client',
+                 :bogus => true
                }
              },
              :users => {
@@ -71,7 +75,8 @@ requestors({
                # for this user
                :knife_user => {
                  :name => "knifey",
-                 :create_me => true
+                 :create_me => true,
+                 :create_knife => true
                }
              }
            })
