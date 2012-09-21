@@ -71,6 +71,12 @@ requestors({
                }
              },
              :users => {
+               :admin => {
+                 :name => "pedant_admin_user",
+                 :create_me => true,
+                 :create_knife => true,
+                 :admin => true
+               },
                # A user for Knife tests.  A knife.rb and key files will be set up
                # for this user
                :knife_user => {
