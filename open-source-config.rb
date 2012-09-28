@@ -51,6 +51,9 @@ include_internal false
 superuser_name 'admin'
 superuser_key  '/etc/chef-server/admin.pem'
 
+webui_key '/etc/chef-server/webui_priv.pem'
+
+
 requestors({
              :clients => {
                # The the admin user, for the purposes of getting things rolling
