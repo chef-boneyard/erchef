@@ -1,6 +1,6 @@
 GIT
   remote: git@github.com:opscode/chef-pedant-core.git
-  revision: e425b858665bca0335842248f783a80da69037c9
+  revision: 44969ff3fac8fd1f63e1a70e08d422865be9236b
   specs:
     chef-pedant-core (0.0.1)
       activesupport (~> 3.2.8)
@@ -16,7 +16,7 @@ GIT
 
 GIT
   remote: git@github.com:opscode/chef-pedant-tests.git
-  revision: 432b1beb76ea24419a91fccf2d32c6080c5a9d3a
+  revision: 7d32cf3e637673df8d20191a619d8df5b89e1b84
   specs:
     chef-pedant-tests (0.0.1)
 
@@ -85,7 +85,7 @@ GEM
     rspec-core (2.11.1)
     rspec-expectations (2.11.3)
       diff-lcs (~> 1.1.3)
-    rspec-mocks (2.11.2)
+    rspec-mocks (2.11.3)
     rspec_junit_formatter (0.1.1)
       builder
       rspec (~> 2.0)
