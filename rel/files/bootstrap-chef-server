@@ -37,6 +37,7 @@ main(_) ->
     Keys = load_keys(?DEFAULT_KEY_PATH),
     create_client(<<"admin">>, admin, get_public_key(admin, Keys)),
     create_client(<<"chef-validator">>, validator, get_public_key('chef-validator', Keys)),
+    create_client(<<"chef-webui">>, admin, get_public_key('webui_pub', Keys)),
     create_default_environment().
 
 init_code_path() ->
