@@ -37,6 +37,7 @@ main(_) ->
     Keys = load_keys(?DEFAULT_KEY_PATH),
     create_client(<<"admin">>, admin, get_public_key(admin, Keys)),
     create_client(<<"chef-validator">>, validator, get_public_key('chef-validator', Keys)),
+    create_client(<<"chef-webui">>, admin, get_public_key('webui_pub', Keys)),
     create_default_environment().
 
 init_code_path() ->
@@ -71,12 +72,9 @@ create_client(Name, Type, PublicKey) ->
 get_public_key(Name, Keys) ->
     case dict:find(Name, Keys) of
         {ok, #'RSAPrivateKey'{modulus=Mod, publicExponent=Exp}} ->
-            EncodedEntry = public_key:pem_entry_encode('SubjectPublicKeyInfo',
-                                                       #'RSAPublicKey'{
-                                                            modulus=Mod,
-                                                            publicExponent=Exp
-                                                       }),
-            public_key:pem_encode([EncodedEntry]);
+            encode_public_pem(Mod, Exp);
+        {ok, #'RSAPublicKey'{modulus=Mod, publicExponent=Exp}} ->
+            encode_public_pem(Mod, Exp);
         {ok, {Format, _, _}} ->
             io:format("could not locate 'RSAPrivateKey' entry in pem ~p - "
                       "did find ~p entry.~n", [Name, Format]),
@@ -103,6 +101,14 @@ is_validator(Type) ->
 
 is_admin(Type) ->
     Type =:= admin.
+
+encode_public_pem(Mod, Exp) ->
+    EncodedEntry = public_key:pem_entry_encode('SubjectPublicKeyInfo',
+                                                       #'RSAPublicKey'{
+                                                            modulus=Mod,
+                                                            publicExponent=Exp
+                                                       }),
+    public_key:pem_encode([EncodedEntry]).
 
 load_keys(Path) ->
     %% temporarly disable log output while we load keys
