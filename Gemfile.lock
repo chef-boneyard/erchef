@@ -1,6 +1,6 @@
 GIT
   remote: git@github.com:opscode/chef-pedant-core.git
-  revision: c4c35b9733d8259e3f80568fb6437eb74c8ba590
+  revision: 89dd4fff4416207dcd60bfa203f71b55383cd196
   specs:
     chef-pedant-core (0.0.1)
       activesupport (~> 3.2.8)
@@ -16,7 +16,7 @@ GIT
 
 GIT
   remote: git@github.com:opscode/chef-pedant-tests.git
-  revision: 1c350c33ce3514b690211c7b925763b0b4ad86f0
+  revision: 7fcc9e11542656db669cc9ee8334a7e07e8fb4da
   specs:
     chef-pedant-tests (0.0.1)
 
@@ -90,7 +90,7 @@ GEM
       builder
       rspec (~> 2.0)
     systemu (2.5.2)
-    treetop (1.4.10)
+    treetop (1.4.11)
       polyglot
       polyglot (>= 0.3.1)
     uuidtools (2.1.3)
