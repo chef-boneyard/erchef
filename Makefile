@@ -37,14 +37,13 @@ tags: TAGS
 TAGS:
 	find deps -name "*.[he]rl" -print | etags -
 
-prepare_release: remove_lock distclean rel update_locked_config set_lock
+prepare_release: distclean unlocked_deps rel update_locked_config
+	@echo 'release prepared, bumping version'
 	@$(REBAR) bump-rel-version
 
-remove_lock:
-	@rm -f USE_REBAR_LOCKED
-
-set_lock:
-	@touch USE_REBAR_LOCKED
+unlocked_deps:
+	@echo 'Fetching deps as: rebar -C rebar.config'
+	@rebar -C rebar.config get-deps
 
 update_locked_config:
 	@rebar lock-deps ignore=meck skip_deps=true
@@ -78,4 +77,4 @@ $(DEPS):
 	@echo "Fetching deps as: $(REBAR)"
 	@$(REBAR) get-deps
 
-.PHONY: distclean remove_lock set_lock prepare_release update_locked_config update clean compile compile_skip allclean tags relclean
+.PHONY: distclean remove_lock set_lock prepare_release update_locked_config update clean compile compile_skip allclean tags relclean unlocked_deps
