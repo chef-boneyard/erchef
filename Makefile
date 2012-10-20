@@ -59,7 +59,9 @@ devrel: rel
 	@/bin/echo  Run \'make update\' to pick up changes in a running VM.
 
 rel/erchef: compile
-	@/bin/echo 'building OTP release package for'
+	@/bin/echo 'building OTP release package for erchef'
+	@/bin/echo "using rebar as: $(REBAR)"
+	@$(REBAR) generate
 	@/bin/echo '                _          _  '
 	@/bin/echo '               | |        | | '
 	@/bin/echo ' _   ,_    __  | |     _  | | '
@@ -68,8 +70,6 @@ rel/erchef: compile
 	@/bin/echo '                          |\  '
 	@/bin/echo '                          |/  '
 	@/bin/echo
-	@/bin/echo "using rebar as: $(REBAR)"
-	@$(REBAR) generate
 
 relclean:
 	@rm -rf rel/erchef
