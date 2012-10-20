@@ -32,11 +32,22 @@ distclean: relclean
 	@rm -rf deps
 	@$(REBAR) clean
 
-tags:
+tags: TAGS
+
+TAGS:
 	find deps -name "*.[he]rl" -print | etags -
 
+prepare_release: remove_lock distclean rel update_locked_config set_lock
+	@$(REBAR) bump-rel-version
+
+remove_lock:
+	@rm -f USE_REBAR_LOCKED
+
+set_lock:
+	@touch USE_REBAR_LOCKED
+
 update_locked_config:
-	@./lock_deps deps meck
+	@rebar lock-deps ignore=meck skip_deps=true
 
 rel: rel/erchef
 
@@ -66,3 +77,5 @@ relclean:
 $(DEPS):
 	@echo "Fetching deps as: $(REBAR)"
 	@$(REBAR) get-deps
+
+.PHONY: distclean remove_lock set_lock prepare_release update_locked_config update clean compile compile_skip allclean tags relclean
