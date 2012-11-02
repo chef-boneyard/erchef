@@ -39,6 +39,7 @@ main(_) ->
     create_client(<<"chef-validator">>, validator, get_public_key('chef-validator', Keys)),
     create_client(<<"chef-webui">>, admin, get_public_key('webui_pub', Keys)),
     UserName = get_user_name(),
+    check_reserved_name(UserName),
     UserPassword = get_user_password(),
     create_user(UserName, UserPassword, get_public_key(UserName, Keys)),
     create_default_environment().
@@ -58,6 +59,12 @@ get_user_password() ->
     Password ->
         Password
   end.
+
+check_reserved_name(Name) when Name == "admin"; Name == "chef-validator"; Name == "chef-webui" ->
+    io:format("webui username ~p is reserved; please pick another ~n", [Name]),
+    halt(2);
+check_reserved_name(Name) ->
+    false.
 
 init_code_path() ->
     AllTheEbins = filename:join(filename:dirname(escript:script_name()), "../lib/*/ebin"),
