@@ -38,7 +38,33 @@ main(_) ->
     create_client(<<"admin">>, admin, get_public_key(admin, Keys)),
     create_client(<<"chef-validator">>, validator, get_public_key('chef-validator', Keys)),
     create_client(<<"chef-webui">>, admin, get_public_key('webui_pub', Keys)),
+    UserName = get_user_name(),
+    check_reserved_name(UserName),
+    UserPassword = get_user_password(),
+    create_user(UserName, UserPassword, admin, get_public_key(UserName, Keys)),
     create_default_environment().
+
+get_user_name() ->
+  case os:getenv("CHEF_ADMIN_USER") of
+    false ->
+        "webui_user";
+    Name ->
+        Name
+    end.
+
+get_user_password() ->
+  case os:getenv("CHEF_ADMIN_PASS") of
+    false ->
+        "p@ssw0rd";
+    Password ->
+        Password
+  end.
+
+check_reserved_name(Name) when Name == "admin"; Name == "chef-validator"; Name == "chef-webui" ->
+    io:format("Username ~p is reserved; please pick another ~n", [Name]),
+    halt(2);
+check_reserved_name(_Name) ->
+    false.
 
 init_code_path() ->
     AllTheEbins = filename:join(filename:dirname(escript:script_name()), "../lib/*/ebin"),
@@ -51,21 +77,29 @@ init_network() ->
 
 create_client(Name, Type, PublicKey) ->
     Args = [Name, is_validator(Type), is_admin(Type), PublicKey],
-    case rpc:call(?ERCHEF, chef_sked, create_client,
-                  Args) of
+    Result = rpc:call(?ERCHEF, chef_sked, create_client, Args),
+    process_result(client, Name, Result).
+
+create_user(Name, Password, Type, PublicKey) ->
+    Args = [Name, Password, is_admin(Type), PublicKey],
+    Result = rpc:call(?ERCHEF, chef_sked, create_user, Args),
+    process_result(user, Name, Result).
+
+process_result(CallType, Name, Result) ->
+    case Result of
         ok ->
-            io:format("client ~p created.~n", [Name]),
+            io:format("~p ~p created.~n", [CallType, Name]),
             {ok, created};
         {ok, PrivateKey} ->
             PKPath = filename:join([?DEFAULT_KEY_PATH, iolist_to_binary([Name, ".pem"])]),
             file:write_file(PKPath, PrivateKey),
-            io:format("client ~p created. Key written to ~p~n", [Name, PKPath]),
+            io:format("~p ~p created. Key written to ~p~n", [CallType, Name, PKPath]),
             {ok, created};
         {conflict, _} ->
-            io:format("client ~p already exists~n", [Name]),
+            io:format("~p ~p already exists~n", [CallType, Name]),
             {ok, exists};
         Error ->
-            io:format("error creating client ~p: ~p~n", [Name, Error]),
+            io:format("error creating ~p ~p: ~p~n", [CallType, Name, Error]),
             halt(2)
     end.
 
