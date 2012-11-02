@@ -38,8 +38,26 @@ main(_) ->
     create_client(<<"admin">>, admin, get_public_key(admin, Keys)),
     create_client(<<"chef-validator">>, validator, get_public_key('chef-validator', Keys)),
     create_client(<<"chef-webui">>, admin, get_public_key('webui_pub', Keys)),
-    create_user(<<"starter-user">>, <<"p@ssw0rd">>, get_public_key('starter-user', Keys)),
+    UserName = get_user_name(),
+    UserPassword = get_user_password(),
+    create_user(UserName, UserPassword, get_public_key(UserName, Keys)),
     create_default_environment().
+
+get_user_name() ->
+  case os:getenv("WEBUI_USER") of
+    false ->
+        "webui_user";
+    Name ->
+        Name
+    end.
+
+get_user_password() ->
+  case os:getenv("WEBUI_PASSWORD") of
+    false ->
+        "p@assw0rd";
+    Password ->
+        Password
+  end.
 
 init_code_path() ->
     AllTheEbins = filename:join(filename:dirname(escript:script_name()), "../lib/*/ebin"),
@@ -56,9 +74,9 @@ create_client(Name, Type, PublicKey) ->
     process_result(client, Name, Result).
 
 create_user(Name, Password, PublicKey) ->
-  Args = [Name, Password, PublicKey],
-  Result = rpc:call(?ERCHEF, chef_sked, create_user, Args),
-  process_result(user, Name, Result).
+    Args = [Name, Password, PublicKey],
+    Result = rpc:call(?ERCHEF, chef_sked, create_user, Args),
+    process_result(user, Name, Result).
 
 process_result(CallType, Name, Result) ->
     case Result of
