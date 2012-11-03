@@ -18,12 +18,11 @@
 %% limitations under the License.
 
 %% TODO: The cookie used by erchef should be part of config
--define(SELF, 'me@127.0.0.1').
+-define(SELF, 'reindexer@127.0.0.1').
 -define(ERCHEF, 'erchef@127.0.0.1').
 -define(ERCHEF_COOKIE, 'erchef').
 
 %% NOTE: This is just for Open Source at the moment.
--define(DEFAULT_KEY_PATH, '/etc/chef-server').
 -define(OSC_ORG_ID, <<"00000000000000000000000000000000">>).
 -define(OSC_ORG_NAME, 'open-source-chef').
 
@@ -43,7 +42,7 @@ main(Args) ->
     init_network(),
     case Args of
         [] ->
-            io:format("You didn't specify a command!"),
+            io:format("You didn't specify a command!  Use either 'drop', 'reindex', or 'complete'"),
             halt(1);
         ["reindex"] ->
             io:format("Reindexing everything...~n"),
@@ -53,7 +52,7 @@ main(Args) ->
             drop();
         ["complete"] ->
             io:format("Removing all index entries and reindexing everything...~n"),
-            drop(),
+            ok = drop(),
             reindex();
         [Command] ->
             io:format("Unrecognized command ~p~n", [Command]),
