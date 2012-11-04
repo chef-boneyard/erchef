@@ -2,3 +2,4 @@ rel/erchef
 deps
 .DS_Store
 TAGS
+cookbooks/.cache

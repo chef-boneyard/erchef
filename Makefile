@@ -77,4 +77,7 @@ $(DEPS):
 	@echo "Fetching deps as: $(REBAR)"
 	@$(REBAR) get-deps
 
+clone_for_dev:
+	chef-solo -c cookbooks/solo.rb -o 'recipe[dev::setup]'
+
 .PHONY: distclean remove_lock set_lock prepare_release update_locked_config update clean compile compile_skip allclean tags relclean unlocked_deps
