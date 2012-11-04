@@ -2,3 +2,5 @@ rel/erchef
 deps
 .DS_Store
 TAGS
+chef/.cache
+chef/dev_config.json

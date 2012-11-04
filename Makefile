@@ -77,4 +77,13 @@ $(DEPS):
 	@echo "Fetching deps as: $(REBAR)"
 	@$(REBAR) get-deps
 
+ifeq ($(wildcard chef/dev_config.json), chef/dev_config.json)
+  CHEF_ATTRS = -j chef/dev_config.json
+else
+  CHEF_ATTRS =
+endif
+
+clone_for_dev:
+	chef-solo -c chef/solo.rb $(CHEF_ATTRS) -o 'recipe[dev::setup]'
+
 .PHONY: distclean remove_lock set_lock prepare_release update_locked_config update clean compile compile_skip allclean tags relclean unlocked_deps
