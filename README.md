@@ -40,7 +40,7 @@ You will need:
    ```
    # list available package types
    bin/vagrant status
-   
+
    # build a deb
    bin/vagrant omnibus build ubuntu-10.04 chef-server
    ```
@@ -123,7 +123,7 @@ A picture is worth some words!
   Webmachine toolkit. The URL routing that matches URLs with Erlang
   modules handling requests for those URLs is defined in
   `priv/dispatch.conf`. The README file in that repo has a more
-  detailed overview.  
+  detailed overview.
 
 * `chef_objects`: Contains Erlang type definitions for core Chef
   objects and serialization code for going between the Erlang
