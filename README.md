@@ -48,6 +48,9 @@ You will need:
    Wait patiently. The omnibus builder will download and compile 33.4% of
    one internet.
 
+   The installer can be found in the `pkg` directory of your
+   `omnibus-chef` checkout.
+
 ## How to Hack on Erchef ##
 
 Before working on the code, if you plan to contribute your changes,
