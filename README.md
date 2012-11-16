@@ -2,7 +2,7 @@
 
 * Documentation: http://docs.opscode.com/
 * Tickets/Issues: http://tickets.opscode.com
-* IRC: #chef and #chef-hacking on Freenode
+* IRC: [#chef](irc://irc.freenode.net/chef) and [#chef-hacking](irc://irc.freenode.net/chef-hacking) on Freenode
 * Mailing list: http://lists.opscode.com
 
 ## Overview ##
