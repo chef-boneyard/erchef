@@ -167,7 +167,7 @@ Erchef uses the [rebar_lock_deps_plugin][] to create a
 SHA. This allows builds of erchef to be reproducible.
 
 All erchef code lives in supporting repositories; the
-rebar.config.lock file must be updated to pull in new code. You can
+`rebar.config.lock` file must be updated to pull in new code. You can
 update the lock file and bump the OTP release version number like
 this:
 
@@ -180,7 +180,7 @@ The `prepare_release` target takes the following actions:
 2. fetch all dependencies **without using the lock file**. This is
    where new code is brought in.
 
-3. Run the `lock-deps` plugin to regenerate the rebar.config.lock file
+3. Run the `lock-deps` plugin to regenerate the `rebar.config.lock` file
    based on the git SHAs of the local dependencies fetched in step 2.
 
 4. Bump the "z" version in `rel/reltool.config`. Depending on the
