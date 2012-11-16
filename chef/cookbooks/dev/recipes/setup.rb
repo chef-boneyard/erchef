@@ -7,7 +7,8 @@ repos = {
   'chef_wm' => 'chef_wm',
   'depsolver' => 'depsolver',
   'fast_log' => 'fast-log-erlang',
-  'stats_hero' => 'stats_hero'
+  'stats_hero' => 'stats_hero',
+  'omnibus-chef' => 'omnibus-chef'
 }
 
 remote = node['dev']['setup']['git-remote']
