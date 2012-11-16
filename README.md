@@ -121,7 +121,7 @@ A picture is worth some words!
   (omnibus-chef) which is also responsible for installing and
   configuring all of the supporting components of the Chef Server.
 
-* `chef_wm`: The "wm" stands for Webmachine. This OTP application
+* `chef_wm`: The "wm" stands for [webmachine][]. This OTP application
   contains the core of the erchef REST API implemented on top of the
   Webmachine toolkit. The URL routing that matches URLs with Erlang
   modules handling requests for those URLs is defined in
@@ -142,8 +142,8 @@ A picture is worth some words!
 
 * `chef_db`: All of erchef's interaction with the RDBMS goes through
   chef_db. The base schema and prepared queries can be found in the
-  `priv` directory of this project. This project uses sqerl as a
-  light-weight RDBMS abstraction layer and pooler for database
+  `priv` directory of this project. This project uses [sqerl][]
+  as a light-weight RDBMS abstraction layer and pooler for database
   connection pooling.
 
 * `chef_certgen`: Used to generate RSA key pairs and X.509
@@ -154,10 +154,10 @@ A picture is worth some words!
   version dependencies.
 
 * `fast_log`: A simple logging library. We intend to revisit this and
-  will likely replace fast_log with lager.
+  will likely replace fast_log with [lager][].
 
 * `stats_hero`: Supports aggregating metrics at the HTTP request
-  level, sending to a StatsD server over UDP, and providing
+  level, sending to a [StatsD][] server over UDP, and providing
   request-level metrics for request logging.
 
 ## Release tagging and branch management ##
@@ -193,7 +193,11 @@ The `prepare_release` target takes the following actions:
 The changes made by `prepare_release` can be pushed to a feature
 branch for integration testing prior to merging to master.
 
+[lager]: https://github.com/basho/lager
 [rebar_lock_deps_plugin]: https://github.com/seth/rebar_lock_deps_plugin/
+[sqerl]: https://github.com/opscode/sqerl
+[StatsD]: https://github.com/etsy/statsd
+[webmachine]: https://github.com/basho/webmachine
 
 ## License ##
 
