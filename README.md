@@ -187,7 +187,7 @@ The `prepare_release` target takes the following actions:
    changes being pulled in, you may need to make a larger version
    bump to conform with [semver](http://semver.org/).
 
-The changes made by `prepasre_release` can be pushed to a feature
+The changes made by `prepare_release` can be pushed to a feature
 branch for integration testing prior to merging to master.
 
 [rebar_lock_deps_plugin]: https://github.com/seth/rebar_lock_deps_plugin/
