@@ -109,7 +109,7 @@ You can search for known issues in
 
 A picture is worth some words!
 
-![erchef component diagram](https://raw.github.com/opscode/erchef/readme/doc/erchef_components.png)
+![erchef component diagram](https://raw.github.com/opscode/erchef/sf/readme/doc/erchef_components.png)
 
 
 * `erchef`: The top-level erchef repository is used to build
