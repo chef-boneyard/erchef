@@ -190,9 +190,22 @@ The `prepare_release` target takes the following actions:
    changes being pulled in, you may need to make a larger version
    bump to conform with [semver](http://semver.org/).
 
+You can trigger a commit of the updated `rebar.config.lock` file and
+`rel/reltool.config` along with a formatted summary of changes in the
+deps using the following rebar command provided by the
+[rebar_lock_deps_plugin][] (and already included in erchef deps):
+
+    rebar commit-release
+
+If this is a known good build, you can generate a standard tag based
+on the version found in `rel/reltool.config` like so:
+
+    rebar tag-release
+
 The changes made by `prepare_release` can be pushed to a feature
 branch for integration testing prior to merging to master.
 
+[rebar_lock_deps_plugin]: https://github.com/seth/rebar_lock_deps_plugin/
 [lager]: https://github.com/basho/lager
 [rebar_lock_deps_plugin]: https://github.com/seth/rebar_lock_deps_plugin/
 [sqerl]: https://github.com/opscode/sqerl
