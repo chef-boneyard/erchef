@@ -21,3 +21,6 @@
 ## Increase logfile size to 10M
 -env RUN_ERL_LOG_MAXSIZE 10000000
 
+## Force SMP support
+## http://erlang.2086793.n4.nabble.com/Some-facts-about-Erlang-and-SMP-td2108770.html
+-smp enable
