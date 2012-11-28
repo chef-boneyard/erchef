@@ -18,7 +18,7 @@
                   "b1882d7ee88e775d961a2678e4fafecef7f77705"}},
        {chef_authn,".*",
                    {git,"git://github.com/opscode/chef_authn.git",
-                        "393e85d68a3ab382ee9b96194b8fa378ceac49fe"}},
+                        "7d230f811038936957d2bb88c27a8a21f96006a4"}},
        {chef_certgen,".*",
                      {git,"git://github.com/opscode/chef_certgen.git",
                           "05cd996e89220287e6a7b71f9ba296819a529678"}},
