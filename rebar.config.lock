@@ -33,7 +33,7 @@
                           "07ec5809d96797a2724a4d457ae3e3a5d4e26cf2"}},
        {chef_wm,".*",
                 {git,"git://github.com/opscode/chef_wm.git",
-                     "12995779d2db9fbb6ed1c671a85de636937b04e2"}},
+                     "3e52086393ee062bf9afa1cfde4a4300de5f1c70"}},
        {couchbeam,".*",
                   {git,"git://github.com/opscode/couchbeam.git",
                        "c7881f6247a92cd62a818fe9f637ff973a5f8923"}},
