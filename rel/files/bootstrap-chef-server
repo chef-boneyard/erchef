@@ -29,6 +29,9 @@
 -define(ERCHEF, 'erchef@127.0.0.1').
 -define(ERCHEF_COOKIE, 'erchef').
 -define(DEFAULT_KEY_PATH, '/etc/chef-server').
+%% File 00600 mode permission specified the Erlang way. See
+%% file:write_file_info for details.
+-define(OWNER_RW, 8#00400 + 8#00200).
 
 main(_) ->
     init_code_path(),
@@ -91,7 +94,7 @@ process_result(CallType, Name, Result) ->
             {ok, created};
         {ok, PrivateKey} ->
             PKPath = filename:join([?DEFAULT_KEY_PATH, iolist_to_binary([Name, ".pem"])]),
-            file:write_file(PKPath, PrivateKey),
+            ok = write_file(PKPath, PrivateKey, ?OWNER_RW),
             io:format("~p ~p created. Key written to ~p~n", [CallType, Name, PKPath]),
             {ok, created};
         {conflict, _} ->
@@ -150,6 +153,23 @@ load_keys(Path) ->
     %% re-enable log output
     error_logger:tty(true),
     Keys.
+
+%% Write data to a file and set permission modes. This is a non-atomic
+%% write, making three separate calls into the file module. The approach
+%% is: create or truncate the file, update mode, then write
+%% contents. The idea being that we never write data into a file without
+%% the mode being as desired.
+%%
+%% The mode is an integer representing the mode as the sum of octal
+%% integers. So, e.g., to make a file rw for owner only: `8#00400 +
+%% 8#00200'.
+write_file(Name, Data, Mode) ->
+    %% first create the file (or truncate it)
+    ok = file:write_file(Name, <<>>),
+    ok = file:change_mode(Name, Mode),
+    %% now write the contents
+    ok = file:write_file(Name, Data),
+    ok.
 
 %%-----------------------------------------------------------------------------
 %% FIXME - export these cargo-culted functions in chef_keyring
