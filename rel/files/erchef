@@ -186,7 +186,7 @@ case "$1" in
         echo "====="
         echo ""
         echo ""
-        gdb --quiet --batch -x bin/debug.gdb --args $CMD
+        gdb --quiet --batch -x etc/debug.gdb --args $CMD
         ;;
 
     clear_cache)
