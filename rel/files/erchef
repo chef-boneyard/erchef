@@ -162,6 +162,33 @@ case "$1" in
         exec $CMD
         ;;
 
+    dbg)
+        # .boot file typically just $SCRIPT (ie, the app name)
+        # however, for debugging, sometimes start_clean.boot is useful:
+        BOOTFILE=$SCRIPT
+        # Setup beam-required vars
+        ROOTDIR=$RUNNER_BASE_DIR
+        BINDIR=$ROOTDIR/erts-$ERTS_VSN/bin
+        EMU=beam
+        PROGNAME=`echo $0 | sed 's/.*\\///'`
+        CMD="$BINDIR/erlexec -boot $RUNNER_BASE_DIR/releases/$APP_VSN/$BOOTFILE -embedded -config $RUNNER_ETC_DIR/app.config -args_file $RUNNER_ETC_DIR/vm.args -- ${1+"$@"}"
+        export EMU
+        export ROOTDIR
+        export BINDIR
+        export PROGNAME
+
+        # Log the startup
+        logger -t "$SCRIPT[$$]" "Starting up in debug mode"
+
+        # Start the VM under GDB for debugging
+        echo "====="
+        echo "Starting $SCRIPT in debug mode..."
+        echo "====="
+        echo ""
+        echo ""
+        gdb --quiet --batch -x bin/debug.gdb --args $CMD
+        ;;
+
     clear_cache)
         if [ $# -ne 2 ]; then
             echo "Usage: $SCRIPT clear_cache <cache_name>"
