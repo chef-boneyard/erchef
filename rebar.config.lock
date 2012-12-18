@@ -105,7 +105,7 @@
                                     "0711998f15154d42a1435249528ad4f6274d25bb"}},
        {sqerl,".*",
               {git,"git://github.com/opscode/sqerl.git",
-                   "3c20c548e0780f1dcb2045e90968cc53e6ead91e"}},
+                   "967068b6bf6d710a2b9ca9ea3ba8cdb1dcca31fc"}},
        {stats_hero,".*",
                    {git,"git://github.com/opscode/stats_hero.git",
                         "f69a5c4eee7ecbcfe26ff3a154eb650b061c4bf9"}},
