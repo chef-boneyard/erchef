@@ -33,7 +33,7 @@
                           "f4706888cf0729bc752ed420919c1743b9aa7cec"}},
        {chef_wm,".*",
                 {git,"git://github.com/opscode/chef_wm.git",
-                     "0381027c069a9552ae6a7d81e854fdf35812003e"}},
+                     "26fe5b4a3ad84b5e8b6845ade6fe779cc0007bea"}},
        {couchbeam,".*",
                   {git,"git://github.com/opscode/couchbeam.git",
                        "c7881f6247a92cd62a818fe9f637ff973a5f8923"}},
@@ -84,7 +84,7 @@
                    "58ded93d5c47675899d8e5e1589270f340ea66c5"}},
        {mochiweb,".*",
                  {git,"git://github.com/basho/mochiweb",
-                      "bed36252198ae7159e3d2b3a9ca9a9bb9817e1de"}},
+                      "05b5b7eb7b830afbd9ba349a40bf40ba0462aa11"}},
        {neotoma,".*",
                 {git,"git://github.com/seancribbs/neotoma.git",
                      "6382470390300f89d10f1e3d50a146d612602002"}},
@@ -108,7 +108,7 @@
                         "5e923a36c92304a14b4a22471ae9d5b2ce3e9291"}},
        {webmachine,".*",
                    {git,"git://github.com/basho/webmachine",
-                        "0fffe21beb1bec3f87510cfad389d844782d457e"}}]}.
+                        "4c441d0f0ca9e343601eb39c8dd2e2117b781dfc"}}]}.
 {plugins,[rebar_lock_deps_plugin]}.
 {cover_enabled,true}.
 
