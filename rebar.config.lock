@@ -30,7 +30,7 @@
                         "b998e11587383432e281011b089afa539211c6aa"}},
        {chef_objects,".*",
                      {git,"git://github.com/opscode/chef_objects.git",
-                          "d121eba4516a9ad2d2e07ed73eba8b8de186a276"}},
+                          "16c077d136047e61e11a1c3cfbfa481adf1b7144"}},
        {chef_wm,".*",
                 {git,"git://github.com/opscode/chef_wm.git",
                      "a57f2bcd9002a6f8f447450bc48ada585000621b"}},
