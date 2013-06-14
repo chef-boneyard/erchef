@@ -7,14 +7,14 @@
 
 ## Overview ##
 
-## How to Build a deb package using omnibus-chef ##
+## How to Build a deb package using omnibus-chef-server ##
 
 You will need:
 
 * [VirtualBox][]
 * [Internet][] connection
 * A checkout of
-  [omnibus-chef](https://github.com/opscode/omnibus-chef) (comes along
+  [omnibus-chef-server](https://github.com/opscode/omnibus-chef-server) (comes along
   for the ride if you followed obtaining source repositories below).
 
 [VirtualBox]: https://www.virtualbox.org/
@@ -23,7 +23,7 @@ You will need:
 1. Create an `omnibus.rb` config file:
 
    ```
-   cd omnibus-chef
+   cd omnibus-chef-server
    cp omnibus.rb.example omnibus.rb
    # edit and set use_s3_caching to false
    ```
@@ -49,7 +49,7 @@ You will need:
    one internet.
 
    The installer can be found in the `pkg` directory of your
-   `omnibus-chef` checkout.
+   `omnibus-chef-server` checkout.
 
 ## How to Hack on Erchef ##
 
@@ -118,7 +118,7 @@ A picture is worth some words!
   download all dependencies, compile Erlang code, and put (almost)
   everything needed into `rel/erchef`. What isn't included?
   Configuration for erchef is handled by omnibus installer
-  (omnibus-chef) which is also responsible for installing and
+  (omnibus-chef-server) which is also responsible for installing and
   configuring all of the supporting components of the Chef Server.
 
 * `chef_wm`: The "wm" stands for [webmachine][]. This OTP application
