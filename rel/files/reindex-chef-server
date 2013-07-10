@@ -22,7 +22,6 @@
 -define(ERCHEF, 'erchef@127.0.0.1').
 -define(ERCHEF_COOKIE, 'erchef').
 
-%% NOTE: This is just for Open Source at the moment.
 -define(OSC_ORG_ID, <<"00000000000000000000000000000000">>).
 -define(OSC_ORG_NAME, 'open-source-chef').
 
@@ -36,45 +35,45 @@
 %%     reindex: Sends information stored in the database to the index again.
 %%     complete: same as "drop" followed by "reindex"
 %%
+%% In most cases, 'complete' is desired, but the option to perform the individual steps is
+%% made avilable for POWER USERS!
+%%
 %% Supplying either no argument or a wrong argument are errors.
 main(Args) ->
-    init_code_path(),
     init_network(),
-    case Args of
-        [] ->
-            io:format("You didn't specify a command!  Use either 'drop', 'reindex', or 'complete'"),
-            halt(1);
-        ["reindex"] ->
-            io:format("Reindexing everything...~n"),
-            reindex();
-        ["drop"] ->
-            io:format("Removing all index entries...~n"),
-            drop();
-        ["complete"] ->
-            io:format("Removing all index entries and reindexing everything...~n"),
-            ok = drop(),
-            reindex();
-        [Command] ->
-            io:format("Unrecognized command ~p~n", [Command]),
-            halt(1)
-    end.
+    Context = make_context(),
+    Command = validate_args(Args),
+    perform(Command, Context, {?OSC_ORG_ID, ?OSC_ORG_NAME}).
 
-drop() ->
-    rpc:call(?ERCHEF, chef_solr, delete_search_db, [?OSC_ORG_ID]).
+validate_args([]) ->
+    io:format("You didn't specify a command!  Use either 'drop', 'reindex', or 'complete'"),
+    halt(1);
+validate_args([Command]) when Command =:= "reindex";
+                              Command =:= "drop";
+                              Command =:= "complete" ->
+    list_to_atom(Command);
+validate_args([Command]) ->
+    io:format("Unrecognized command ~p~n", [Command]),
+    halt(1).
 
-reindex() ->
-    rpc:call(?ERCHEF, chef_reindex, reindex, [?OSC_ORG_NAME]).
+%% @doc Actually do the reindexing.
+-spec perform(drop | complete | reindex,
+              Context :: term(),
+              {OrgId::binary(), OrgName::binary()}) -> term().
+perform(drop, _Context, {OrgId, _OrgName}) ->
+    io:format("Removing all index entries~n"),
+    ok = rpc:call(?ERCHEF, chef_solr, delete_search_db, [OrgId]);
+perform(reindex, Context, OrgInfo) ->
+    io:format("Sending all data to be indexed again.  It may take some time before everything is available via search.~n"),
+    ok = rpc:call(?ERCHEF, chef_reindex, reindex, [Context, OrgInfo]);
+perform(complete, Context, OrgInfo) ->
+    %% Just do everything
+    perform(drop, Context, OrgInfo),
+    perform(reindex, Context, OrgInfo).
 
-%%------------------------------------------------------------------------------
-%% Internal Functions
-%%------------------------------------------------------------------------------
-
-%% These are borrowed from the bootstrap-erchef-server script.  It would be good to extract
-%% / templatize these somehow, for use across multiple server-side scripts
-
-init_code_path() ->
-    AllTheEbins = filename:join(filename:dirname(escript:script_name()), "../lib/*/ebin"),
-    [code:add_path(CodePath) || CodePath <- filelib:wildcard(AllTheEbins)].
+make_context() ->
+    ReqId = base64:encode(crypto:md5(term_to_binary(make_ref()))),
+    rpc:call(?ERCHEF, chef_db, make_context, [ReqId]).
 
 init_network() ->
     net_kernel:start([?SELF, longnames]),
