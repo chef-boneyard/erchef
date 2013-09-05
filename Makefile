@@ -65,7 +65,7 @@ devrel: rel
 	@/bin/echo done.
 	@/bin/echo  Run \'make update\' to pick up changes in a running VM.
 
-rel/erchef: compile
+rel/erchef: compile bundle
 	@/bin/echo 'building OTP release package for erchef'
 	@/bin/echo "using rebar as: $(REBAR)"
 	@$(REBAR) generate
@@ -77,6 +77,9 @@ rel/erchef: compile
 	@/bin/echo '                          |\  '
 	@/bin/echo '                          |/  '
 	@/bin/echo
+
+bundle: deps/chef_objects
+	@cd deps/chef_objects/priv/depselector_rb; bundle install --deployment --path .bundle
 
 relclean:
 	@rm -rf rel/erchef
