@@ -3,7 +3,10 @@
 {sub_dirs,["rel"]}.
 {erl_opts,[debug_info]}.
 {erl_dep_retries,10}.
-{deps,[{meck,".*",{git,"git://github.com/esl/meck.git","master"}},
+{deps,[
+       {meck,".*",
+             {git,"git://github.com/eproxus/meck.git",
+                  "b1f313b4cecc3df05a477a93641bf0a24d858590"}},
        {rebar_lock_deps_plugin,".*",
                                {git,"git://github.com/seth/rebar_lock_deps_plugin.git",
                                     "911481ee8a20f59fc9092e370e2b0d116bec19df"}},
