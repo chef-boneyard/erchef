@@ -1,4 +1,14 @@
-# Erchef: The Opscode Chef Server #
+# DEPRECATED Erchef: The Opscode Chef Server #
+
+# DEPRECATED: Moved to chef-server repository
+
+New development on this component of the Chef Server now happens
+in the Chef Server repository:
+
+https://github.com/chef/chef-server
+
+This repository should only be used for changes to older versions
+of Chef Server.
 
 * Documentation: http://docs.opscode.com/
 * Tickets/Issues: http://tickets.opscode.com
