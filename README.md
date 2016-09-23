@@ -1,5 +1,3 @@
-# DEPRECATED Erchef: The Opscode Chef Server #
-
 # DEPRECATED: Moved to chef-server repository
 
 New development on this component of the Chef Server now happens
